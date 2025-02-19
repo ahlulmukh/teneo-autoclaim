@@ -1,3 +1,0 @@
-   http://user:pw@host:port
-   http://user:pw@host:port
-   http://user:pw@host:port
