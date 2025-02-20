@@ -5,9 +5,8 @@ const userAgent = new UserAgent().toString();
 const axios = require("axios");
 
 module.exports = class claimTeneo {
-  constructor(email, password, proxy = null, currentNum, total) {
-    this.email = email;
-    this.password = password;
+  constructor(token, proxy = null, currentNum, total) {
+    this.token = token;
     this.proxy = proxy;
     this.currentNum = currentNum;
     this.total = total;
@@ -66,40 +65,6 @@ module.exports = class claimTeneo {
     return null;
   }
 
-  async loginAccount() {
-    logMessage(
-      this.currentNum,
-      this.total,
-      "Trying to login account...",
-      "process"
-    );
-    const headers = {
-      "x-api-key": "OwAG3kib1ivOJG4Y0OCZ8lJETa6ypvsDtGmdhcjB",
-    };
-
-    const sendData = {
-      email: this.email,
-      password: this.password,
-    };
-
-    try {
-      const response = await this.makeRequest(
-        "POST",
-        `https://auth.teneo.pro/api/login`,
-        { data: sendData, headers: headers }
-      );
-
-      if (response && response.data) {
-        logMessage(this.currentNum, this.total, "Login success", "success");
-        return response.data.access_token;
-      } else {
-        return false;
-      }
-    } catch (error) {
-      return false;
-    }
-  }
-
   async getDataReferral(token) {
     logMessage(
       this.currentNum,
@@ -107,6 +72,7 @@ module.exports = class claimTeneo {
       "Trying to get referral data...",
       "process"
     );
+
     const headers = {
       Authorization: `Bearer ${token}`,
     };
@@ -117,15 +83,24 @@ module.exports = class claimTeneo {
         "https://api.teneo.pro/api/users/referrals",
         { headers: headers }
       );
+
       if (response && response.data.success === true) {
+        const referralData = response.data.unfiltered?.referrals || [];
         logMessage(
           this.currentNum,
           this.total,
-          "Success get referral data",
+          `Success get referral data. Total referrals: ${referralData.length}`,
           "success"
         );
-        return response.data.referrals;
+        return referralData;
       }
+
+      logMessage(
+        this.currentNum,
+        this.total,
+        "Failed to get referral data.",
+        "error"
+      );
       return null;
     } catch (error) {
       logMessage(
@@ -191,11 +166,7 @@ module.exports = class claimTeneo {
   }
 
   async singleProses() {
-    const tokenLogin = await this.loginAccount();
-    if (!tokenLogin) {
-      return;
-    }
-    const referralData = await this.getDataReferral(tokenLogin);
+    const referralData = await this.getDataReferral(this.token);
 
     if (!referralData || referralData.length === 0) {
       logMessage(
@@ -232,7 +203,7 @@ module.exports = class claimTeneo {
         `Trying to claim referral ${i + 1}/${totalClaims}`,
         "process"
       );
-      await this.claimReferral(tokenLogin, referral.id);
+      await this.claimReferral(this.token, referral.id);
       await new Promise((resolve) => setTimeout(resolve, 2000));
     }
 

@@ -16,7 +16,7 @@ async function main() {
   );
   try {
     const accounts = fs
-      .readFileSync("accounts.txt", "utf8")
+      .readFileSync("token.txt", "utf8")
       .split("\n")
       .filter(Boolean);
     const count = accounts.length;
@@ -35,9 +35,9 @@ async function main() {
     for (let i = 0; i < count; i++) {
       console.log(chalk.white("-".repeat(85)));
       logMessage(i + 1, count, "Procesing Account", "info");
-      const [email, password] = accounts[i].split(":");
+      const token = accounts[i];
       const currentProxy = await getRandomProxy(i + 1, count);
-      const teneo = new claimTeneo(email, password, currentProxy, i + 1, count);
+      const teneo = new claimTeneo(token, currentProxy, i + 1, count);
 
       try {
         await teneo.singleProses();
