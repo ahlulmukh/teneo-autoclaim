@@ -11,7 +11,7 @@ Just for auto claim referral succes who ever don't want claim manually
 ## Requirements
 
 - Node.js v18.20.5 LTS or latest.
-- email and password account
+- token account
 - proxy (optional)
 
 ## Notes
@@ -33,7 +33,7 @@ Just for auto claim referral succes who ever don't want claim manually
    npm install
    ```
 
-3. cahnge your proxy `nano proxy.txt` file in the root directory and add your proxies (one per line).
+3. change your proxy `nano proxy.txt` file in the root directory and add your proxies (one per line).
    Format Proxy
 
    ```
@@ -42,12 +42,12 @@ Just for auto claim referral succes who ever don't want claim manually
    http://user:pw@host:port
    ```
 
-4. change accounts.txt `nano accounts.json` in the root directory and add your account format.
+4. change token.txt `nano token.txt` in the root directory and add your account format.
 
    ```
-   email:password
-   email2:password2
-   email3:password3
+   token
+   token2
+   token3
    ```
 
 ## Usage
